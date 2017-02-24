@@ -15,6 +15,12 @@
   {datatype, integer}
 ]}.
 
+{mapping, "msgsave.redis.password", "emq_msgsave_redis.server", [
+  {default, ""},
+  {datatype, string},
+  hidden
+]}.
+
 {translation, "emq_msgsave_redis.server", fun(Conf) ->
   {RHost, RPort} =
   case cuttlefish:conf_get("msgsave.redis.server", Conf) of
