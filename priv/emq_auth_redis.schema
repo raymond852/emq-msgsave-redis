@@ -1,0 +1,40 @@
+%% emq_msgsave_redis config mapping
+
+{mapping, "msgsave.redis.server", "emq_msgsave_redis.server", [
+  {default, {"127.0.0.1", 6379}},
+  {datatype, [integer, ip, string]}
+]}.
+
+{mapping, "msgsave.redis.pool", "emq_msgsave_redis.pool", [
+  {default, 8},
+  {datatype, integer}
+]}.
+
+{mapping, "msgsave.redis.database", "emq_msgsave_redis.database", [
+  {default, 0},
+  {datatype, integer}
+]}.
+
+{translation, "emq_msgsave_redis.server", fun(Conf) ->
+  {RHost, RPort} =
+  case cuttlefish:conf_get("msgsave.redis.server", Conf) of
+    {Ip, Port} -> {Ip, Port};
+    S          -> case string:tokens(S, ":") of
+                    [Domain]       -> {Domain, 6379};
+                    [Domain, Port] -> {Domain, list_to_integer(Port)}
+                  end
+    end,
+  Pool = cuttlefish:conf_get("msgsave.redis.pool", Conf),
+  Passwd = cuttlefish:conf_get("msgsave.redis.password", Conf),
+  DB = cuttlefish:conf_get("msgsave.redis.database", Conf),
+  [{pool_size, Pool},
+   {auto_reconnect, 1},
+   {host, RHost},
+   {port, RPort},
+   {database, DB},
+   {password, Passwd}]
+end}.
+
+{mapping, "msgsave.redis.chatroom_msg_save_cmd", "emq_msgsave_redis.chatroom_msg_save_cmd", [
+  {datatype, string}
+]}.
