@@ -1,7 +1,7 @@
 .rebar/
 .eunit/
 .erlang.mk/
-emqttd_auth_redis.d
+emqttd_msgsave_redis.d
 deps/
 ct.coverdata
 logs/
