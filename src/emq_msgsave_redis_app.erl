@@ -8,7 +8,7 @@
 
 start(_StartType, _StartArgs) ->
   {ok, Sup} = emq_msgsave_redis_sup:start_link(),
-  emq_msgsave_redis:load(),
+  emq_msgsave_redis:load(application:get_all_env()),
   {ok, Sup}.
 
 stop(_State) ->
