@@ -8,7 +8,7 @@
 
 -define(ENV(Key, Opts), proplists:get_value(Key, Opts)).
 
--export([connect/1, q/2]).
+-export([connect/1, handle/1]).
 
 %%--------------------------------------------------------------------
 %% Redis Connect/Query
@@ -22,15 +22,13 @@ connect(Opts) ->
                       no_reconnect).
 
 %% Redis Query.
--spec(q(string(), mqtt_message()) -> {ok, undefined | binary() | list()} | {error, atom() | binary()}).
-q(CmdStr, Message) ->
-    Cmd = string:tokens(replvar(CmdStr, Message), " "),
-    ecpool:with_client(?APP, fun(C) -> eredis:q(C, Cmd) end).
-
-replvar(Cmd, #mqtt_message{topic = Topic, payload = Payload, timestamp = Timestamp}) ->
-    replvar(replvar(replvar(Cmd, "%cr_id", Topic), "%ct", Payload), "%t", list_to_binary(integer_to_list(element(2, Timestamp)))).
-
-replvar(S, _Var, undefined) ->
-    S;
-replvar(S, Var, Val) ->
-    re:replace(S, Var, Val, [{return, list}]).
+-spec(handle(mqtt_message()) -> {ok, undefined | binary() | list()} | {error, atom() | binary()}).
+handle(Message) ->
+  Timestamp = Message#mqtt_message.timestamp,
+  Timeoffset = element(1, Timestamp) * 1000000 + element(2, Timestamp) - 1483228800,
+  Payload = Message#mqtt_message.payload,
+  Topic = Message#mqtt_message.topic,
+  Keyprefix = <<"m:">>,
+  BinList = [<<"ZADD">>, <<Keyprefix/binary, Topic/binary>>, list_to_binary(integer_to_list(Timeoffset)), Payload],
+  Cmd = [binary_to_list(X) || X <- BinList],
+  ecpool:with_client(?APP, fun(C) -> eredis:q(C, Cmd) end).

@@ -7,7 +7,7 @@
 -export([handle_message_publish/2]).
 
 handle_chatroom_message(Message) ->
-  emq_msgsave_redis_cli:q(chatroom_msg_save_cmd, Message).
+  emq_msgsave_redis_cli:handle(Message).
 
 
 load(Env) ->

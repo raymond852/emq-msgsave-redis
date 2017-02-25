@@ -40,7 +40,3 @@
    {database, DB},
    {password, Passwd}]
 end}.
-
-{mapping, "msgsave.redis.chatroom_msg_save_cmd", "emq_msgsave_redis.chatroom_msg_save_cmd", [
-  {datatype, string}
-]}.
