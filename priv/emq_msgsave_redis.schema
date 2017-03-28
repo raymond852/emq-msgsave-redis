@@ -5,12 +5,12 @@
   {datatype, [integer, ip, string]}
 ]}.
 
-{mapping, "msgsave.redis.pool", "emq_msgsave_redis.pool", [
+{mapping, "msgsave.redis.pool", "emq_msgsave_redis.server", [
   {default, 8},
   {datatype, integer}
 ]}.
 
-{mapping, "msgsave.redis.database", "emq_msgsave_redis.database", [
+{mapping, "msgsave.redis.database", "emq_msgsave_redis.server", [
   {default, 0},
   {datatype, integer}
 ]}.
@@ -40,3 +40,8 @@
    {database, DB},
    {password, Passwd}]
 end}.
+
+{mapping, "msgsave.topic.prefix", "emq_msgsave_redis.topic_prefix", [
+  {default, "bw/"},
+  {datatype, string},
+]}.
