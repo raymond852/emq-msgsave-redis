@@ -43,5 +43,5 @@ end}.
 
 {mapping, "msgsave.topic.prefix", "emq_msgsave_redis.topic_prefix", [
   {default, "bw/"},
-  {datatype, string},
+  {datatype, string}
 ]}.

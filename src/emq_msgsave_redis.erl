@@ -11,9 +11,6 @@
 handle_chatroom_message(Message) ->
   emq_msgsave_redis_cli:handle(Message).
 
-get_topic_prefix(Env) ->
-  ?ENV(topic_prefix, Env).
-
 load(Env) ->
   emqttd:hook('message.publish', fun ?MODULE:handle_message_publish/2, [Env]).
 
@@ -23,14 +20,17 @@ unload() ->
 
 
 % saved chatroom published mesage to redis
-handle_message_publish(Message = #mqtt_message{topic = <<"cr:", _/binary>>}, Env) ->
-  TopicPrefix = ?ENV(topic_prefix, Env),
-  io:format("test some blood ~s\n", [TopicPrefix]),
-  handle_chatroom_message(Message),
+handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
+  TopicPrefixBin = ?ENV(topic_prefix, Env),
+  TopicPrefixList = binary:bin_to_list(TopicPrefixBin),
+  TopicList = binary:bin_to_list(Topic),
+  if
+    prefix(TopicPrefixList, TopicList) ->
+        handle_chatroom_message(Message);
+  end
   {ok, Message};
 
 
 handle_message_publish(Message, Env) ->
   TopicPrefix = ?ENV(topic_prefix, Env),
-  io:format("test some blood ~s\n", [TopicPrefix]),
   {ok, Message}.
