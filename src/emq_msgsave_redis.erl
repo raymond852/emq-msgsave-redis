@@ -8,9 +8,6 @@
 
 -define(ENV(Key, Opts), proplists:get_value(Key, Opts)).
 
-handle_chatroom_message(Message) ->
-  emq_msgsave_redis_cli:handle(Message).
-
 load(Env) ->
   emqttd:hook('message.publish', fun ?MODULE:handle_message_publish/2, [Env]).
 
@@ -24,11 +21,14 @@ handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
   TopicPrefixBin = ?ENV(topic_prefix, Env),
   TopicPrefixList = binary:bin_to_list(TopicPrefixBin),
   TopicList = binary:bin_to_list(Topic),
-  if
-    prefix(TopicPrefixList, TopicList) ->
-        handle_chatroom_message(Message);
-  end
-  {ok, Message};
+  case prefix(TopicPrefixList, TopicList) of
+     true ->
+        emq_msgsave_redis_cli:handle(Message),
+        {ok, Message};
+     _ ->
+        {ok, Message}
+  end.
+
 
 
 handle_message_publish(Message, Env) ->
