@@ -17,8 +17,7 @@ unload() ->
 
 % saved chatroom published mesage to redis
 handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
-  TopicPrefixBin = ?ENV(topic_prefix, Env),
-  TopicPrefixList = binary:bin_to_list(TopicPrefixBin),
+  TopicPrefixList = ?ENV(topic_prefix, Env),
   TopicList = binary:bin_to_list(Topic),
   case lists:prefix(TopicPrefixList, TopicList) of
      true ->
