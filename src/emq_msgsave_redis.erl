@@ -27,9 +27,7 @@ handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
         {ok, Message};
      _ ->
         {ok, Message}
-  end.
-
-
+  end;
 
 handle_message_publish(Message, Env) ->
   TopicPrefix = ?ENV(topic_prefix, Env),
