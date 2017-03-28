@@ -19,8 +19,6 @@ unload() ->
 handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
   TopicPrefixList = ?ENV(topic_prefix, Env),
   TopicList = binary:bin_to_list(Topic),
-  io:format("prefix ~s", [TopicPrefixList]),
-  io:format("topic ~s", [TopicList]),
   case lists:prefix(TopicPrefixList, TopicList) of
      true ->
         emq_msgsave_redis_cli:handle(Message);
@@ -29,5 +27,5 @@ handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
   end,
   {ok, Message};
 
-handle_message_publish(Message, Env) ->
+handle_message_publish(Message, _) ->
   {ok, Message}.
