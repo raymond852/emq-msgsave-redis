@@ -15,13 +15,12 @@ unload() ->
   emqttd:unhook('message.publish', fun ?MODULE:handle_message_publish/2).
 
 
-
 % saved chatroom published mesage to redis
 handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
   TopicPrefixBin = ?ENV(topic_prefix, Env),
   TopicPrefixList = binary:bin_to_list(TopicPrefixBin),
   TopicList = binary:bin_to_list(Topic),
-  case prefix(TopicPrefixList, TopicList) of
+  case lists:prefix(TopicPrefixList, TopicList) of
      true ->
         emq_msgsave_redis_cli:handle(Message)
   end,
