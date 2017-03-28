@@ -23,11 +23,9 @@ handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
   TopicList = binary:bin_to_list(Topic),
   case prefix(TopicPrefixList, TopicList) of
      true ->
-        emq_msgsave_redis_cli:handle(Message),
-        {ok, Message};
-     _ ->
-        {ok, Message}
-  end;
+        emq_msgsave_redis_cli:handle(Message)
+  end,
+  {ok, Message};
 
 handle_message_publish(Message, Env) ->
   TopicPrefix = ?ENV(topic_prefix, Env),
