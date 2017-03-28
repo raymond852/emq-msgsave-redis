@@ -23,7 +23,7 @@ handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
   io:format("topic ~s", TopicList),
   case lists:prefix(TopicPrefixList, TopicList) of
      true ->
-        emq_msgsave_redis_cli:handle(Message)
+        emq_msgsave_redis_cli:handle(Message);
      _ ->
        ok
   end,
