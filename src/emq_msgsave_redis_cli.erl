@@ -24,8 +24,8 @@ connect(Opts) ->
 %% Redis Query.
 -spec(handle(mqtt_message()) -> {ok, undefined | binary() | list()} | {error, atom() | binary()}).
 handle(Message) ->
-  Timestamp = Message#mqtt_message.timestamp,
-  Timeoffset = element(1, Timestamp) * 1000 + element(2, Timestamp) * 1000 - 1483228800000,
+  {Mega, Sec, Micro} = Message#mqtt_message.timestamp,
+  Timeoffset = (Mega*1000000 + Sec) * 1000 + round(Micro/1000) - 1483228800000,
   Payload = Message#mqtt_message.payload,
   Topic = Message#mqtt_message.topic,
   Keyprefix = <<"m:">>,
