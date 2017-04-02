@@ -7,8 +7,6 @@
 
 -export([handle_message_publish/2]).
 
--define(ENV(Key, Opts), proplists:get_value(Key, Opts)).
-
 load(Env) ->
   emqttd:hook('message.publish', fun ?MODULE:handle_message_publish/2, [Env]).
 
@@ -17,7 +15,7 @@ unload() ->
 
 
 % saved chatroom published mesage to redis
-handle_message_publish(Message = #mqtt_message{topic = Topic}, _) ->
+handle_message_publish(Message = #mqtt_message{topic = Topic}, _Env) ->
   TopicPrefixList = application:get_env(?APP, topic_prefix, undefined),
   TopicList = binary:bin_to_list(Topic),
   case lists:prefix(TopicPrefixList, TopicList) of
@@ -28,5 +26,5 @@ handle_message_publish(Message = #mqtt_message{topic = Topic}, _) ->
   end,
   {ok, Message};
 
-handle_message_publish(Message, _) ->
+handle_message_publish(Message, _Env) ->
   {ok, Message}.
