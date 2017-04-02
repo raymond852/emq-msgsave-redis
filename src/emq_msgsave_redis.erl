@@ -1,6 +1,7 @@
 -module(emq_msgsave_redis).
 
 -include_lib("emqttd/include/emqttd.hrl").
+-include("emq_msgsave_redis.hrl").
 
 -export([load/1, unload/0]).
 
@@ -16,8 +17,8 @@ unload() ->
 
 
 % saved chatroom published mesage to redis
-handle_message_publish(Message = #mqtt_message{topic = Topic}, Env) ->
-  TopicPrefixList = ?ENV(topic_prefix, Env),
+handle_message_publish(Message = #mqtt_message{topic = Topic}, _) ->
+  TopicPrefixList = application:get_env(?APP, topic_prefix, undefined),
   TopicList = binary:bin_to_list(Topic),
   case lists:prefix(TopicPrefixList, TopicList) of
      true ->
